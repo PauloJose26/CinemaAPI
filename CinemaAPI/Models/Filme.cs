@@ -15,7 +15,7 @@ public class Filme
     public string Genero { get; set; }
     [Required]
     [Range(70, 600)]
-    public int Duracao { get; set; }
+    public int? Duracao { get; set; }
 
     public Filme(string titulo, string genero, int duracao)
     {

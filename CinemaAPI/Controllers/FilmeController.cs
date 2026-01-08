@@ -1,4 +1,6 @@
-﻿using CinemaAPI.Models;
+﻿using CinemaAPI.Data;
+using CinemaAPI.Data.Dtos;
+using CinemaAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -8,69 +10,72 @@ namespace CinemaAPI.Controller;
 [Route("[controller]")]
 public class FilmeController : ControllerBase
 {
-    private static List<Filme> filmes = [
-        new("Guerra dos Mundos", "Ficção Científica", 116) { Id = 1 },
-        new("Invocação do Mal", "Terror", 112) { Id = 2 },
-        new("Avatar", "Aventura", 197) { Id = 3 }
-    ];
+    private readonly CinemaContext _context;
 
-    private static int count = 4;
+    public FilmeController(CinemaContext context)
+    {
+        _context = context;
+    }
 
     [HttpGet]
     public IActionResult ListarFilmes()
     {
-        return Ok(filmes);
+        return Ok(_context.Filmes.ToList());
     }
 
-    [HttpGet("buscarPorNome/{nome}")]
-    public IActionResult BuscarFilmePorTitulo(string nome)
+    [HttpGet("buscarPorNome/{titulo}")]
+    public IActionResult BuscarFilmePorTitulo(string titulo)
     {
-        var filmeRecuperado = filmes.FirstOrDefault(f => f.Titulo.Contains(nome));
-        if (filmeRecuperado is null)
-            return NotFound();
+        var filmeReculperado = _context.Filmes.FirstOrDefault(filme => filme.Titulo.ToLower().Contains(titulo.ToLower()));
+        if (filmeReculperado is null)
+            return NotFound("Filme não encontrado");
 
-        return Ok(filmeRecuperado);
+        return Ok(filmeReculperado);
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscarFilmePorId(int id)
     {
-        var filmeRecuperado = filmes.FirstOrDefault(f => f.Id.Equals(id));
-        if (filmeRecuperado is null)
-            return NotFound();
+        var filmeReculperado = _context.Filmes.FirstOrDefault(filme => filme.Id.Equals(id));
+        if (filmeReculperado is null)
+            return NotFound("Filme não encontrado");
 
-        return Ok(filmeRecuperado);
+        return Ok(filmeReculperado);
     }
 
     [HttpPost]
-    public IActionResult CadastrarFilme([FromBody] Filme filme)
+    public IActionResult CadastrarFilme([FromBody] CreateFilmeDto createFilmeDto)
     {
-        filme.Id = count++;
-        filmes.Add(filme);
-        return Created();
+        var filme = createFilmeDto.ConverterFilme();
+        _context.Filmes.Add(filme);
+        _context.SaveChanges();
+
+        return CreatedAtAction(nameof(BuscarFilmePorId), new { id = filme.Id }, filme);
     }
 
     [HttpPut("{id}")]
-    public IActionResult EditarFilme([FromBody] Filme filme, int id)
+    public IActionResult EditarFilme([FromBody] UpdateFilmeDto filmeRequest, int id)
     {
-        var filmeRecuperado = filmes.FirstOrDefault(f => f.Id.Equals(id));
-        if (filmeRecuperado is null)
-            return NotFound();
+        var filmeReculperado = _context.Filmes.FirstOrDefault(filme => filme.Id.Equals(id));
+        if (filmeReculperado is null)
+            return NotFound("Filme não encontrado");
 
-        filmeRecuperado.Titulo = filme.Titulo;
-        filmeRecuperado.Genero = filme.Genero;
-        filmeRecuperado.Duracao = filme.Duracao;
+        filmeRequest.AtualizarFilme(filmeReculperado);
+        _context.SaveChanges();
+
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public IActionResult DeletarFilme(int id)
     {
-        var filmeRecuperado = filmes.FirstOrDefault(f => f.Id.Equals(id));
-        if (filmeRecuperado is null)
-            return NotFound();
+        var filmeReculperado = _context.Filmes.FirstOrDefault(filme => filme.Id.Equals(id));
+        if (filmeReculperado is null)
+            return NotFound("Filme não encontrado");
 
-        filmes.Remove(filmeRecuperado);
+        _context.Filmes.Remove(filmeReculperado);
+        _context.SaveChanges();
+
         return NoContent();
     }
 }
