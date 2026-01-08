@@ -41,13 +41,13 @@ public class FilmeController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult EditarFilme([FromServices] FilmeDAL filmeDAL, [FromBody] UpdateFilmeDto filmeRequest, int id)
+    public IActionResult EditarFilme([FromServices] FilmeDAL filmeDAL, [FromBody] UpdateFilmeDto updateFilmeDto, int id)
     {
         var filmeReculperado = filmeDAL.BuscarFilmePorId(id);
         if (filmeReculperado is null)
             return NotFound("Filme não encontrado");
 
-        filmeRequest.AtualizarFilme(filmeReculperado);
+        updateFilmeDto.AtualizarFilme(filmeReculperado);
         filmeDAL.AtualizarFilme(filmeReculperado);
 
         return NoContent();
