@@ -16,6 +16,6 @@ public class UpdateFilmeDto
     {
         filme.Titulo = (!string.IsNullOrWhiteSpace(this.Titulo)) ? this.Titulo:filme.Titulo;
         filme.Genero = (!string.IsNullOrWhiteSpace(this.Genero)) ? this.Genero : filme.Genero;
-        filme.Duracao = (this.Duracao is not null) ? this.Duracao : filme.Duracao;
+        filme.Duracao = (this.Duracao is not null) ? (int)this.Duracao : filme.Duracao;
     }
 }
