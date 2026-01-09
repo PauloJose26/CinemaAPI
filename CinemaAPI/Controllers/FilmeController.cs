@@ -1,5 +1,6 @@
 ﻿using CinemaAPI.Data;
 using CinemaAPI.Data.Dtos;
+using CinemaAPI.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,21 +12,21 @@ namespace CinemaAPI.Controller;
 public class FilmeController : ControllerBase
 {
     [HttpGet]
-    public IActionResult ListarFilmes([FromServices] FilmeDAL filmeDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20)
+    public IActionResult ListarFilmes([FromServices] DAL<Filme> filmeDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20)
     {
-        return Ok(filmeDAL.ListarFilmes(skip, take));
+        return Ok(filmeDAL.Listar(skip, take));
     }
 
     [HttpGet("buscarPorNome/{titulo}")]
-    public IActionResult BuscarFilmePorTitulo([FromServices] FilmeDAL filmeDAL, string titulo)
+    public IActionResult BuscarFilmePorTitulo([FromServices] DAL<Filme> filmeDAL, string titulo)
     {
-        return Ok(filmeDAL.BuscarFilmesPorTitulo(titulo));
+        return Ok(filmeDAL.FiltrarPor(filme => filme.Titulo.Contains(titulo, StringComparison.CurrentCultureIgnoreCase)));
     }
 
     [HttpGet("{id}")]
-    public IActionResult BuscarFilmePorId([FromServices] FilmeDAL filmeDAL, int id)
+    public IActionResult BuscarFilmePorId([FromServices] DAL<Filme> filmeDAL, int id)
     {
-        var filmeReculperado = filmeDAL.BuscarFilmePorId(id);
+        var filmeReculperado = filmeDAL.BuscarPor(filme => filme.Id.Equals(id));
         if (filmeReculperado is null)
             return NotFound("Filme não encontrado");
 
@@ -33,31 +34,31 @@ public class FilmeController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CadastrarFilme([FromServices] FilmeDAL filmeDAL, [FromBody] CreateFilmeDto createFilmeDto)
+    public IActionResult CadastrarFilme([FromServices] DAL<Filme> filmeDAL, [FromBody] CreateFilmeDto createFilmeDto)
     {
         var filme = createFilmeDto.ConverterFilme();
-        filmeDAL.AdicionarFilme(filme);
+        filmeDAL.Adicionar(filme);
 
         return CreatedAtAction(nameof(BuscarFilmePorId), new { id = filme.Id }, filme);
     }
 
     [HttpPut("{id}")]
-    public IActionResult EditarFilme([FromServices] FilmeDAL filmeDAL, [FromBody] UpdateFilmeDto updateFilmeDto, int id)
+    public IActionResult EditarFilme([FromServices] DAL<Filme> filmeDAL, [FromBody] UpdateFilmeDto updateFilmeDto, int id)
     {
-        var filmeReculperado = filmeDAL.BuscarFilmePorId(id);
+        var filmeReculperado = filmeDAL.BuscarPor(filme => filme.Id.Equals(id));
         if (filmeReculperado is null)
             return NotFound("Filme não encontrado");
 
         updateFilmeDto.AtualizarFilme(filmeReculperado);
-        filmeDAL.AtualizarFilme(filmeReculperado);
+        filmeDAL.Atualizar(filmeReculperado);
 
         return NoContent();
     }
     
     [HttpPatch("{id}")]
-    public IActionResult EditarFilmeParcial([FromServices] FilmeDAL filmeDAL, JsonPatchDocument<UpdateFilmeDto> patch, int id)
+    public IActionResult EditarFilmeParcial([FromServices] DAL<Filme> filmeDAL, JsonPatchDocument<UpdateFilmeDto> patch, int id)
     {
-        var filmeReculperado = filmeDAL.BuscarFilmePorId(id);
+        var filmeReculperado = filmeDAL.BuscarPor(filme => filme.Id.Equals(id));
         if (filmeReculperado is null)
             return NotFound("Filme não encontrado");
 
@@ -67,19 +68,19 @@ public class FilmeController : ControllerBase
             return ValidationProblem(ModelState);
 
         filmeUpdate.AtualizarFilme(filmeReculperado);
-        filmeDAL.AtualizarFilme(filmeReculperado);
+        filmeDAL.Atualizar(filmeReculperado);
 
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public IActionResult DeletarFilme([FromServices] FilmeDAL filmeDAL, int id)
+    public IActionResult DeletarFilme([FromServices] DAL<Filme> filmeDAL, int id)
     {
-        var filmeReculperado = filmeDAL.BuscarFilmePorId(id);
+        var filmeReculperado = filmeDAL.BuscarPor(filme => filme.Id.Equals(id));
         if (filmeReculperado is null)
             return NotFound("Filme não encontrado");
 
-        filmeDAL.DeletarFilme(filmeReculperado);
+        filmeDAL.Deletar(filmeReculperado);
 
         return NoContent();
     }

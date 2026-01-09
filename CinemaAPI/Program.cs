@@ -1,4 +1,5 @@
 using CinemaAPI.Data;
+using CinemaAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -6,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("CinemaConnection");
 builder.Services.AddDbContext<CinemaContext>(optionsBuilder => optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-builder.Services.AddTransient<FilmeDAL>();
+builder.Services.AddTransient<DAL<Filme>>();
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddSwaggerGen();
 
