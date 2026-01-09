@@ -13,7 +13,7 @@ public class FilmeDAL
     }
 
     
-    public ICollection<Filme> ListarFilmes() => [ ..this.context.Filmes ];
+    public ICollection<Filme> ListarFilmes(int skip, int take) => [ ..this.context.Filmes.Skip(skip).Take(take) ];
 
     public void AdicionarFilme(Filme filme)
     {

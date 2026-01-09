@@ -1,5 +1,6 @@
 ﻿using CinemaAPI.Data;
 using CinemaAPI.Data.Dtos;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -10,9 +11,9 @@ namespace CinemaAPI.Controller;
 public class FilmeController : ControllerBase
 {
     [HttpGet]
-    public IActionResult ListarFilmes([FromServices] FilmeDAL filmeDAL)
+    public IActionResult ListarFilmes([FromServices] FilmeDAL filmeDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20)
     {
-        return Ok(filmeDAL.ListarFilmes());
+        return Ok(filmeDAL.ListarFilmes(skip, take));
     }
 
     [HttpGet("buscarPorNome/{titulo}")]
@@ -48,6 +49,24 @@ public class FilmeController : ControllerBase
             return NotFound("Filme não encontrado");
 
         updateFilmeDto.AtualizarFilme(filmeReculperado);
+        filmeDAL.AtualizarFilme(filmeReculperado);
+
+        return NoContent();
+    }
+    
+    [HttpPatch("{id}")]
+    public IActionResult EditarFilmeParcial([FromServices] FilmeDAL filmeDAL, JsonPatchDocument<UpdateFilmeDto> patch, int id)
+    {
+        var filmeReculperado = filmeDAL.BuscarFilmePorId(id);
+        if (filmeReculperado is null)
+            return NotFound("Filme não encontrado");
+
+        var filmeUpdate = UpdateFilmeDto.ConverterParaUpdateFilme(filmeReculperado);
+        patch.ApplyTo(filmeUpdate, ModelState);
+        if (!TryValidateModel(filmeUpdate))
+            return ValidationProblem(ModelState);
+
+        filmeUpdate.AtualizarFilme(filmeReculperado);
         filmeDAL.AtualizarFilme(filmeReculperado);
 
         return NoContent();
