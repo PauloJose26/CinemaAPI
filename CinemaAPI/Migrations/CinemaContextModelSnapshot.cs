@@ -43,7 +43,7 @@ namespace CinemaAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Filmes");
+                    b.ToTable("Filmes", (string)null);
                 });
 #pragma warning restore 612, 618
         }
