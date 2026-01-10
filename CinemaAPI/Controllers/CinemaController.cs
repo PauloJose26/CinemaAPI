@@ -12,7 +12,8 @@ namespace CinemaAPI.Controllers;
 public class CinemaController : ControllerBase
 {
     [HttpGet]
-    public IActionResult ListarCinemas([FromServices] DAL<Cinema> cinemaDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20) => Ok(cinemaDAL.Listar(skip, take));
+    public IActionResult ListarCinemas([FromServices] DAL<Cinema> cinemaDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20)
+        => Ok(cinemaDAL.Listar(skip, take));
     
     [HttpGet("{id}")]
     public IActionResult BuscarCinemaPorId([FromServices] DAL<Cinema> cinemaDAL, int id)

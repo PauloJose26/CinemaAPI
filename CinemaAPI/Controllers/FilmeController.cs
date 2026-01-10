@@ -12,7 +12,8 @@ namespace CinemaAPI.Controllers;
 public class FilmeController : ControllerBase
 {
     [HttpGet]
-    public IActionResult ListarFilmes([FromServices] DAL<Filme> filmeDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20) => Ok(filmeDAL.Listar(skip, take));
+    public IActionResult ListarFilmes([FromServices] DAL<Filme> filmeDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20) 
+        => Ok(filmeDAL.Listar(skip, take));
 
     [HttpGet("buscarPorNome/{titulo}")]
     public IActionResult BuscarFilmePorTitulo([FromServices] DAL<Filme> filmeDAL, string titulo) => 
@@ -38,7 +39,7 @@ public class FilmeController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult EditarFilme([FromServices] DAL<Filme> filmeDAL, [FromBody] UpdateFilmeDto updateFilmeDto, int id)
+    public IActionResult AtualizarFilme([FromServices] DAL<Filme> filmeDAL, [FromBody] UpdateFilmeDto updateFilmeDto, int id)
     {
         var filmeReculperado = filmeDAL.BuscarPor(filme => filme.Id.Equals(id));
         if (filmeReculperado is null)
@@ -51,7 +52,7 @@ public class FilmeController : ControllerBase
     }
     
     [HttpPatch("{id}")]
-    public IActionResult EditarFilmeParcial([FromServices] DAL<Filme> filmeDAL, JsonPatchDocument<UpdateFilmeDto> patch, int id)
+    public IActionResult AtualizarFilmeParcial([FromServices] DAL<Filme> filmeDAL, JsonPatchDocument<UpdateFilmeDto> patch, int id)
     {
         var filmeReculperado = filmeDAL.BuscarPor(filme => filme.Id.Equals(id));
         if (filmeReculperado is null)
