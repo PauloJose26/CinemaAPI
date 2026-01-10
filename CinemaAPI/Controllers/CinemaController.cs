@@ -46,6 +46,7 @@ public class CinemaController : ControllerBase
         return NoContent();
     }
 
+    /*
     [HttpPatch("{id}")]
     public IActionResult AtualizarCinemaPatch([FromServices] DAL<Cinema> cinemaDAL, JsonPatchDocument<UpdateCinemaDto> patch, int id)
     {
@@ -63,6 +64,7 @@ public class CinemaController : ControllerBase
 
         return NoContent();
     }
+    */
 
     [HttpDelete("{id}")]
     public IActionResult DeletarCinema([FromServices] DAL<Cinema> cinemaDAL, int id)
