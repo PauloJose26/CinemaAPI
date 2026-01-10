@@ -27,7 +27,7 @@ public class CinemaController : ControllerBase
     [HttpPost]
     public IActionResult CadastrarCinema([FromServices] DAL<Cinema> cinemaDAL, [FromBody] CreateCinemaDto createCinemaDto)
     {
-        var cinema = createCinemaDto.ConverterCinema();
+        var cinema = createCinemaDto.ConverterParaCinema();
         cinemaDAL.Adicionar(cinema);
 
         return CreatedAtAction(nameof(BuscarCinemaPorId), new { id = cinema.Id }, cinema);

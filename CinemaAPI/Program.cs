@@ -9,6 +9,8 @@ var connectionString = builder.Configuration.GetConnectionString("CinemaConnecti
 builder.Services.AddDbContext<CinemaContext>(optionsBuilder => optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddTransient<DAL<Filme>>();
 builder.Services.AddTransient<DAL<Cinema>>();
+builder.Services.AddTransient<DAL<Endereco>>();
+
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddSwaggerGen();
 

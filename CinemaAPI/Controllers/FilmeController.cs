@@ -31,7 +31,7 @@ public class FilmeController : ControllerBase
     [HttpPost]
     public IActionResult CadastrarFilme([FromServices] DAL<Filme> filmeDAL, [FromBody] CreateFilmeDto createFilmeDto)
     {
-        var filme = createFilmeDto.ConverterFilme();
+        var filme = createFilmeDto.ConverterParaFilme();
         filmeDAL.Adicionar(filme);
 
         return CreatedAtAction(nameof(BuscarFilmePorId), new { id = filme.Id }, filme);
