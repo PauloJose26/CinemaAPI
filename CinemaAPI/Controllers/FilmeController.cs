@@ -5,23 +5,18 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace CinemaAPI.Controller;
+namespace CinemaAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class FilmeController : ControllerBase
 {
     [HttpGet]
-    public IActionResult ListarFilmes([FromServices] DAL<Filme> filmeDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20)
-    {
-        return Ok(filmeDAL.Listar(skip, take));
-    }
+    public IActionResult ListarFilmes([FromServices] DAL<Filme> filmeDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20) => Ok(filmeDAL.Listar(skip, take));
 
     [HttpGet("buscarPorNome/{titulo}")]
-    public IActionResult BuscarFilmePorTitulo([FromServices] DAL<Filme> filmeDAL, string titulo)
-    {
-        return Ok(filmeDAL.FiltrarPor(filme => filme.Titulo.Contains(titulo, StringComparison.CurrentCultureIgnoreCase)));
-    }
+    public IActionResult BuscarFilmePorTitulo([FromServices] DAL<Filme> filmeDAL, string titulo) => 
+        Ok(filmeDAL.FiltrarPor(filme => filme.Titulo.Contains(titulo, StringComparison.CurrentCultureIgnoreCase)));
 
     [HttpGet("{id}")]
     public IActionResult BuscarFilmePorId([FromServices] DAL<Filme> filmeDAL, int id)
@@ -62,12 +57,12 @@ public class FilmeController : ControllerBase
         if (filmeReculperado is null)
             return NotFound("Filme não encontrado");
 
-        var filmeUpdate = UpdateFilmeDto.ConverterParaUpdateFilme(filmeReculperado);
-        patch.ApplyTo(filmeUpdate, ModelState);
-        if (!TryValidateModel(filmeUpdate))
+        var updateFilmeDto = UpdateFilmeDto.ConverterParaUpdateFilme(filmeReculperado);
+        patch.ApplyTo(updateFilmeDto, ModelState);
+        if (!TryValidateModel(updateFilmeDto))
             return ValidationProblem(ModelState);
 
-        filmeUpdate.AtualizarFilme(filmeReculperado);
+        updateFilmeDto.AtualizarFilme(filmeReculperado);
         filmeDAL.Atualizar(filmeReculperado);
 
         return NoContent();
