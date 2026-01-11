@@ -14,6 +14,8 @@ public class Endereco
 
     public int? Numero { get; set; }
 
+    public virtual Cinema Cinema { get; set; }
+
     public Endereco(string logradouro, int? numero)
     {
         this.Logradouro = logradouro;

@@ -12,17 +12,18 @@ namespace CinemaAPI.Controllers;
 public class CinemaController : ControllerBase
 {
     [HttpGet]
-    public IActionResult ListarCinemas([FromServices] DAL<Cinema> cinemaDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20)
-        => Ok(cinemaDAL.Listar(skip, take));
+    public IActionResult ListarCinemas([FromServices] DAL<Cinema> cinemaDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20){
+        return Ok(cinemaDAL.Listar(skip, take).Select(cinema => new ReadCinemaDto(cinema)));
+    }
     
     [HttpGet("{id}")]
     public IActionResult BuscarCinemaPorId([FromServices] DAL<Cinema> cinemaDAL, int id)
     {
-        var cinemaRecuperado = cinemaDAL.BuscarPor(filme => filme.Id.Equals(id));
+        var cinemaRecuperado = cinemaDAL.BuscarPor(cinema => cinema.Id.Equals(id));
         if (cinemaRecuperado is null)
             return NotFound("Cinema não encontrado");
 
-        return Ok(cinemaRecuperado);
+        return Ok(new ReadCinemaDto(cinemaRecuperado));
     }
 
     [HttpPost]
@@ -31,7 +32,7 @@ public class CinemaController : ControllerBase
         var cinema = createCinemaDto.ConverterParaCinema();
         cinemaDAL.Adicionar(cinema);
 
-        return CreatedAtAction(nameof(BuscarCinemaPorId), new { id = cinema.Id }, cinema);
+        return CreatedAtAction(nameof(BuscarCinemaPorId), new { id = cinema.Id }, new ReadCinemaDto(cinema));
     }
 
     [HttpPut("{id}")]
@@ -46,7 +47,6 @@ public class CinemaController : ControllerBase
 
         return NoContent();
     }
-
     /*
     [HttpPatch("{id}")]
     public IActionResult AtualizarCinemaPatch([FromServices] DAL<Cinema> cinemaDAL, JsonPatchDocument<UpdateCinemaDto> patch, int id)
@@ -66,11 +66,10 @@ public class CinemaController : ControllerBase
         return NoContent();
     }
     */
-
     [HttpDelete("{id}")]
     public IActionResult DeletarCinema([FromServices] DAL<Cinema> cinemaDAL, int id)
     {
-        var cinemaRecuperado = cinemaDAL.BuscarPor(filme => filme.Id.Equals(id));
+        var cinemaRecuperado = cinemaDAL.BuscarPor(cinema => cinema.Id.Equals(id));
         if (cinemaRecuperado is null)
             return NotFound("Cinema não encontrado");
 

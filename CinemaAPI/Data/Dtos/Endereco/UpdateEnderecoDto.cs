@@ -21,6 +21,6 @@ public class UpdateEnderecoDto
     public void AtualizarEndereco(Endereco endereco)
     {
         endereco.Logradouro = this.Logradouro;
-        endereco.Numero = this.Numero;
+        endereco.Numero = (this.Numero is not null) ? this.Numero: endereco.Numero;
     }
 }

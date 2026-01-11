@@ -12,7 +12,7 @@ public class EnderecoController : ControllerBase
 {
     [HttpGet]
     public IActionResult ListarEndereco([FromServices] DAL<Endereco> enderecoDAL, [FromQuery] int skip = 0, int take = 0) 
-        => Ok(enderecoDAL.Listar(skip, take));
+        => Ok(enderecoDAL.Listar(skip, take).Select(endereco => new ReadEnderecoDto(endereco)));
 
     [HttpGet("{id}")]
     public IActionResult BuscarEnderecoPorId([FromServices] DAL<Endereco> enderecoDAL, int id)
@@ -21,7 +21,7 @@ public class EnderecoController : ControllerBase
         if (enderecoRecuperado is null)
             return NotFound("Endereço não encontrado");
 
-        return Ok(enderecoRecuperado);
+        return Ok(new ReadEnderecoDto(enderecoRecuperado));
     }
 
     [HttpPost]
@@ -30,11 +30,11 @@ public class EnderecoController : ControllerBase
         var endereco = createEnderecoDto.ConverterParaEndereco();
         enderecoDAL.Adicionar(endereco);
 
-        return CreatedAtAction(nameof(BuscarEnderecoPorId), new { id = endereco.Id }, endereco);
+        return CreatedAtAction(nameof(BuscarEnderecoPorId), new { id = endereco.Id }, new ReadEnderecoDto(endereco));
     }
 
     [HttpPut("{id}")]
-    public IActionResult EditarEndereco([FromServices] DAL<Endereco> enderecoDAL, [FromBody] UpdateEnderecoDto updateEnderecoDto, int id)
+    public IActionResult AtualizarEndereco([FromServices] DAL<Endereco> enderecoDAL, [FromBody] UpdateEnderecoDto updateEnderecoDto, int id)
     {
         var enderecoRecuperado = enderecoDAL.BuscarPor(endereco => endereco.Id.Equals(id));
         if (enderecoRecuperado is null)

@@ -8,6 +8,7 @@ public class CreateCinemaDto
 {
     [Required(ErrorMessage = "O campo nome do Cinema é obrigatório")]
     public string Nome { get; set; }
+    public int EnderecoId { get; set; }
 
-    public Cinema ConverterParaCinema() => new(this.Nome);
+    public Cinema ConverterParaCinema() => new(this.Nome, this.EnderecoId);
 }
