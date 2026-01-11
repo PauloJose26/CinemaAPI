@@ -12,9 +12,8 @@ namespace CinemaAPI.Controllers;
 public class CinemaController : ControllerBase
 {
     [HttpGet]
-    public IActionResult ListarCinemas([FromServices] DAL<Cinema> cinemaDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20){
-        return Ok(cinemaDAL.Listar(skip, take).Select(cinema => new ReadCinemaDto(cinema)));
-    }
+    public IActionResult ListarCinemas([FromServices] DAL<Cinema> cinemaDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20)
+        => Ok(cinemaDAL.Listar(skip, take).Select(cinema => new ReadCinemaDto(cinema)));
     
     [HttpGet("{id}")]
     public IActionResult BuscarCinemaPorId([FromServices] DAL<Cinema> cinemaDAL, int id)
@@ -27,8 +26,16 @@ public class CinemaController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CadastrarCinema([FromServices] DAL<Cinema> cinemaDAL, [FromBody] CreateCinemaDto createCinemaDto)
+    public IActionResult CadastrarCinema([FromServices] DAL<Cinema> cinemaDAL, [FromServices] DAL<Endereco> enderecoDAL, [FromBody] CreateCinemaDto createCinemaDto)
     {
+        var enderecoRecuperado = enderecoDAL.BuscarPor(endereco => endereco.Id.Equals(createCinemaDto.EnderecoId));
+        if (enderecoRecuperado is null)
+            return NotFound("Endereço não encontrado");
+
+        var cinemaRecuperado = cinemaDAL.BuscarPor(cinema => cinema.Id.Equals(createCinemaDto.EnderecoId));
+        if (cinemaRecuperado is not null)
+            return BadRequest("Um cinema já possui esse endereço");
+
         var cinema = createCinemaDto.ConverterParaCinema();
         cinemaDAL.Adicionar(cinema);
 

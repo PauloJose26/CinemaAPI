@@ -11,7 +11,7 @@ namespace CinemaAPI.Controllers;
 public class EnderecoController : ControllerBase
 {
     [HttpGet]
-    public IActionResult ListarEndereco([FromServices] DAL<Endereco> enderecoDAL, [FromQuery] int skip = 0, int take = 0) 
+    public IActionResult ListarEndereco([FromServices] DAL<Endereco> enderecoDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20)
         => Ok(enderecoDAL.Listar(skip, take).Select(endereco => new ReadEnderecoDto(endereco)));
 
     [HttpGet("{id}")]
