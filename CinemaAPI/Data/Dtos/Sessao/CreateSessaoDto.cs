@@ -8,6 +8,7 @@ public class CreateSessaoDto
 {
     [Required]
     public int FilmeId { get; set; }
+    public int? CinemaId { get; set; }
 
-    public Sessao ConverterParaSessao() => new(FilmeId);
+    public Sessao ConverterParaSessao() => new(this.FilmeId, this.CinemaId);
 }

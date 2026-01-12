@@ -11,10 +11,13 @@ public class ReadCinemaDto
 
     public ReadEnderecoDto Endereco { get; set; }
 
-    public ReadCinemaDto(Cinema cinema)
+    public ReadCinemaDto(Cinema? cinema)
     {
-        this.Id = cinema.Id;
-        this.Nome = cinema.Nome;
-        this.Endereco = new(cinema.Endereco);
+        if(cinema is not null)
+        {
+            this.Id = cinema.Id;
+            this.Nome = cinema.Nome;
+            this.Endereco = new(cinema.Endereco);
+        }
     }
 }
