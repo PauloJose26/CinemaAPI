@@ -11,4 +11,9 @@ public class Sessao
     [Required]
     public int FilmeId { get; set; }
     public virtual Filme Filme { get; set; }
+
+    public Sessao(int filmeId)
+    {
+        FilmeId = filmeId;
+    }
 }

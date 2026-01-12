@@ -13,11 +13,12 @@ public class FilmeController : ControllerBase
 {
     [HttpGet]
     public IActionResult ListarFilmes([FromServices] DAL<Filme> filmeDAL, [FromQuery] int skip = 0, [FromQuery] int take = 20) 
-        => Ok(filmeDAL.Listar(skip, take));
+        => Ok(filmeDAL.Listar(skip, take).Select(filme => new ReadFilmeDto(filme)));
 
     [HttpGet("buscarPorNome/{titulo}")]
     public IActionResult BuscarFilmePorTitulo([FromServices] DAL<Filme> filmeDAL, string titulo) => 
-        Ok(filmeDAL.FiltrarPor(filme => filme.Titulo.Contains(titulo, StringComparison.CurrentCultureIgnoreCase)));
+        Ok(filmeDAL.FiltrarPor(filme => filme.Titulo.Contains(titulo, StringComparison.CurrentCultureIgnoreCase))
+            .Select(filme => new ReadFilmeDto(filme)));
 
     [HttpGet("{id}")]
     public IActionResult BuscarFilmePorId([FromServices] DAL<Filme> filmeDAL, int id)
@@ -26,7 +27,7 @@ public class FilmeController : ControllerBase
         if (filmeReculperado is null)
             return NotFound("Filme não encontrado");
 
-        return Ok(filmeReculperado);
+        return Ok(new ReadFilmeDto(filmeReculperado));
     }
 
     [HttpPost]
@@ -35,7 +36,7 @@ public class FilmeController : ControllerBase
         var filme = createFilmeDto.ConverterParaFilme();
         filmeDAL.Adicionar(filme);
 
-        return CreatedAtAction(nameof(BuscarFilmePorId), new { id = filme.Id }, filme);
+        return CreatedAtAction(nameof(BuscarFilmePorId), new { id = filme.Id }, new ReadFilmeDto(filme));
     }
 
     [HttpPut("{id}")]
