@@ -16,8 +16,9 @@ public class Sessao
     public int? CinemaId { get; set; }
     public virtual Cinema? Cinema { get; set; }
 
-    public Sessao(int filmeId)
+    public Sessao(int filmeId, int? cinemaId)
     {
-        FilmeId = filmeId;
+        this.FilmeId = filmeId;
+        this.CinemaId = cinemaId;
     }
 }
