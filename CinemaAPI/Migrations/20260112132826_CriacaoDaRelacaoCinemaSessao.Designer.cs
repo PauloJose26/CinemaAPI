@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaAPI.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20260112105615_CirandoRelacaoComSessaoEFilme")]
-    partial class CirandoRelacaoComSessaoEFilme
+    [Migration("20260112132826_CriacaoDaRelacaoCinemaSessao")]
+    partial class CriacaoDaRelacaoCinemaSessao
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,10 +103,15 @@ namespace CinemaAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CinemaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("FilmeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CinemaId");
 
                     b.HasIndex("FilmeId");
 
@@ -126,13 +131,24 @@ namespace CinemaAPI.Migrations
 
             modelBuilder.Entity("CinemaAPI.Models.Sessao", b =>
                 {
+                    b.HasOne("CinemaAPI.Models.Cinema", "Cinema")
+                        .WithMany("Sessoes")
+                        .HasForeignKey("CinemaId");
+
                     b.HasOne("CinemaAPI.Models.Filme", "Filme")
                         .WithMany("Sessoes")
                         .HasForeignKey("FilmeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Cinema");
+
                     b.Navigation("Filme");
+                });
+
+            modelBuilder.Entity("CinemaAPI.Models.Cinema", b =>
+                {
+                    b.Navigation("Sessoes");
                 });
 
             modelBuilder.Entity("CinemaAPI.Models.Endereco", b =>

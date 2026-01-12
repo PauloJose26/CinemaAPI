@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CinemaAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class CirandoRelacaoComSessaoEFilme : Migration
+    public partial class CriandoRelacaoComSessaoEFilme : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
