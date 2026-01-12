@@ -13,6 +13,7 @@ builder.Services.AddDbContext<CinemaContext>(optionsBuilder => optionsBuilder
 builder.Services.AddTransient<DAL<Filme>>();
 builder.Services.AddTransient<DAL<Cinema>>();
 builder.Services.AddTransient<DAL<Endereco>>();
+builder.Services.AddTransient<DAL<Sessao>>();
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddSwaggerGen();
