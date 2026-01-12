@@ -26,10 +26,12 @@ public class SessaoController:ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CadastrarSessao([FromServices] DAL<Sessao> sessaoDAL, [FromServices] DAL<Filme> filmeDAL, [FromBody] CreateSessaoDto createSessaoDto)
+    public IActionResult CadastrarSessao([FromServices] DAL<Sessao> sessaoDAL, [FromServices] DAL<Filme> filmeDAL, [FromServices] DAL<Cinema> cinemaDAL, [FromBody] CreateSessaoDto createSessaoDto)
     {
         if (filmeDAL.BuscarPor(filme => filme.Id.Equals(createSessaoDto.FilmeId)) is null)
             return NotFound("Filme não encontrado");
+        if(createSessaoDto.CinemaId is not null && cinemaDAL.BuscarPor(cinema => cinema.Id.Equals(createSessaoDto.CinemaId)) is null)
+            return NotFound("Cinema não encontrado");
 
         var sessao = createSessaoDto.ConverterParaSessao();
         sessaoDAL.Adicionar(sessao);
